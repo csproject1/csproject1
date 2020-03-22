@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet a Dog | User Info</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body style="background-color: rgb(244, 245, 246);">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+        <div class="container" style="font-size: 1rem;">
+            <a class="navbar-brand" href="/home">
+                <img src="../imgs/rover.png" alt="" style="width: 100px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item pr-4">
+                        <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item pr-4 active">
+                        <a class="nav-link" href="/search-sitter">Search a Sitter</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">Our Services</a>
+                    </li>
+
+                    <li class="nav-item pr-4">
+                        <a class="nav-link" href="/tips-tricks">Dog Care</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 6rem;">
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Tell us a bit about your dog.</h5>
+                    <form action="/profile/add" method="POST">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" name="dogName" id="dog-name">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="Weight">Weight (lbs)</label>
+                                <input type="text" class="form-control" name="weight" id="weight">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputAddress2">Breed(s)</label>
+                            <p class="card-text"><small class="text-muted">Enter all breeds that apply. If your dog is a
+                                    mixed breed, add ‘Mixed’ as well.</small></p>
+                            <select id="dogBreed" class="custom-select my-1 mr-sm-2" name="dogBreed">
+                                <option selected>Breeds</option>
+                                <option value="Pug">Pug</option>
+                                <option value="Brittany">Brittany</option>
+                                <option value="Doberman">Doberman</option>
+                                <option value="Siberian Husky">Siberian Husky</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="age">Age (Years)</label>
+                                <input type="text" class="form-control" name="ageYears" id="ageYears">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="age">Age (Months)</label>
+                                <input type="text" class="form-control" name="ageMonths" id="ageMonths">
+                            </div>
+                            <div class="form-group col-md-3 form-check">
+                                <label for="sex">Sex</label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="male" name="gender" value="Male">
+                                        Male
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="female" name="gender" value="Female">
+                                        Female
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="microchipped">Is your dog microchipped ?</label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="microchippedYes" name="microchipped" value="Yes">
+                                        Yes
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="microchippedNo" name="microchipped" value="No">
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="microchipped">Does your dog get along well with cats ?
+                                </label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="catsYes" name="cats" value="Yes">
+                                        Yes
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="catsNo" name="cats" value="No">
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="nature">Does your dog get along well with other dogs?</label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="natureYes" name="nature" value="Yes">
+                                        Yes
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="natureNo" name="nature" value="No">
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="children">Does your dog get along well with children ?</label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="childrenYes" name="children" value="Yes">
+                                        Yes
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="childrenNo" name="children" value="No">
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="trained">Is your dog housetrained ?</label>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="trainedYes" name="trained" value="Yes">
+                                        Yes
+                                    </div>
+                                    <div class="form-group col-xs-12 col-lg-6 mt-1">
+                                        <input type="radio" id="trainedNo" name="trained" value="No">
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row" style="text-align: center;">
+                            <div class="form-group col">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="container-fluid page-footer font-small bg-info pt-4 mt-5">
+        <div class="container text-center text-md-left">
+            <div class="row">
+                <div class="col-md-6 mt-md-0 mt-3">
+                    <h5 class="text-uppercase font-weight-bold">Footer text 1</h5>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita sapiente sint, nulla, nihil
+                        repudiandae commodi voluptatibus corrupti animi sequi aliquid magnam debitis, maxime quam
+                        recusandae
+                        harum esse fugiat. Itaque, culpa?</p>
+
+                </div>
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <div class="col-md-6 mb-md-0 mb-3">
+                    <h5 class="text-uppercase font-weight-bold">Footer text 2</h5>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio deserunt fuga perferendis modi
+                        earum
+                        commodi aperiam temporibus quod nulla nesciunt aliquid debitis ullam omnis quos ipsam,
+                        aspernatur id
+                        excepturi hic.</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="container-fluid footer-copyright text-center py-3 bg-info">
+            © 2020 A Place for Rover, Inc. All Rights Reserved.
+            711 Capitol Way S., Suite 204, Olympia, WA 98501
+        </div>
+    </footer>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+        integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
