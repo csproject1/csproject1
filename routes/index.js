@@ -1,8 +1,24 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
+
+const users = [];
+const dog = [];
+const booking = [];
+const dogCare = [];
+var loginFlag = false;
+var userEmail = '';
+var sitterEmail = '';
+var dogBreed = '';
+
 
 const initializePassport = require('../passport-config');
 initializePassport(
@@ -10,10 +26,6 @@ initializePassport(
     email => users.find(user => user.email === email),
     id => users.find(user => user.id === id)
 );
-
-const users = [];
-const dog = [];
-var loginFlag = false;
 
 router.get('/', checkAuthenticated, (req, res) => {
     res.render('index.ejs', { name: req.user.firstName });
@@ -56,9 +68,15 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 })
 
+router.get('/services', (req, res) => {
+    res.render('service.ejs', {
+        isLogin: loginFlag
+    });
+});
+
 router.delete('/logout', (req, res) => {
-    req.logOut();
     loginFlag = false;
+    req.logOut();
     res.redirect('/login');
 });
 
@@ -73,12 +91,142 @@ router.get('/search-sitter', checkAuthenticated, (req, res) => {
     });
 });
 
+router.get('/search-sitter/:name', checkAuthenticated, (req, res) => {
+    fs.readFile('sitter_list.json', (err, data) => {
+        if (err) console.log(err);
+        let sitter = JSON.parse(data);
+        for (var i = 0; i < sitter.length; i++) {
+            if (sitter[i].name === req.params.name) {
+                sitterEmail = sitter[i].sitterEmail;
+                res.render('sitter-detail.ejs', {
+                    sitterData: sitter[i],
+                    feedback: sitter[i].feedback,
+                    services: sitter[i].services
+                });
+            }
+        }
+    });
+});
+
+router.get('/:name/contact', checkAuthenticated, (req, res) => {
+    fs.readFile('sitter_list.json', (err, data) => {
+        if (err) console.log(err);
+        let sitter = JSON.parse(data);
+        for (var i = 0; i < sitter.length; i++) {
+            if (sitter[i].name === req.params.name) {
+                res.render('contact-sitter.ejs', {
+                    sitterData: sitter[i],
+                    feedback: sitter[i].feedback,
+                    services: sitter[i].services,
+                    dogData: dog
+                });
+            }
+        }
+    });
+});
+
+router.post('/:name/contact', checkAuthenticated, (req, res) => {
+    const today = new Date();
+    booking.push({
+        id: Date.now().toString(),
+        userFirstName: req.body.firstName,
+        userLastName: req.body.lastName,
+        sitterName: req.params.name,
+        bookingDate: today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate(),
+        serviceSelected: req.body.selectedService,
+        dropOffDate: req.body.dropOff,
+        dropOffTimeFrom: req.body.selectDropTimeFrom,
+        dropOffTimeTo: req.body.selectDropTimeTo,
+        pickUpDate: req.body.pickUp,
+        pickUpTimeFrom: req.body.selectPickTimeFrom,
+        pickUpTimeTo: req.body.selectPickTimeTo,
+        userEmail: req.body.userEmail,
+        pets: dog,
+        message: req.body.message
+    });
+    userEmail = req.body.userEmail;
+    console.log(sitterEmail);
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'petadogapp@gmail.com',
+            pass: 'cSPROJECT#1'
+        }
+    });
+    const data = ejs.renderFile(__dirname + '\\order-details.ejs', { bookingDetails: booking, dogData: booking.pets }, (err, data) => {
+        let mailOtions = {
+            from: 'petadogapp@gmail.com',
+            to: sitterEmail,
+            subject: 'Booking confirmation from Pet a Dog',
+            html: data,
+            cc: userEmail
+        }
+        transporter.sendMail(mailOtions, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.send(err);
+            }
+            else {
+                console.log("Email Sent");
+                res.redirect('/:name/booking-details');
+            }
+        });
+    });
+});
+
+router.get('/:name/booking-details', checkAuthenticated, (req, res) => {
+    res.render('booking-confirmed.ejs', {
+        bookingDetails: booking
+    });
+});
+
 router.get('/dog-care', (req, res) => {
     res.render('dog-care.ejs', {
         isLogin: loginFlag,
         userData: req.user
     });
     console.log(loginFlag);
+});
+
+router.post('/dog-care/add', (req, res) => {
+    dog.push({
+        id: Date.now().toString(),
+        name: req.body.guestGogName,
+        weight: req.body.guestWeight,
+        breed: req.body.guestDogBreed,
+        ageYears: req.body.guestAgeYears,
+        ageMonths: req.body.guestAgeMonths,
+        gender: req.body.guestGender,
+        cats: req.body.guestCats,
+        isMicrochipped: req.body.guestMicrochipped,
+        nature: req.body.guestNature,
+        children: req.body.guestChildren,
+        isTrained: req.body.guestTrained
+    });
+    dogBreed = req.body.guestDogBreed;
+    fs.readFile('tips.json', (err, data) => {
+        if (err) console.log(err);
+        let tips = JSON.parse(data);
+        for (var i = 0; i < tips.length; i++) {
+            if (tips[i].breed === dogBreed) {
+                dogCare.push({
+                    breed: tips[i].breed,
+                    info: tips[i].info,
+                    dogTips: tips[i].tips
+                });
+                res.redirect('/info');
+            }
+        }
+    });
+});
+
+router.get('/info', (req, res) => {
+    console.log(dogCare);
+    res.render('guest-dog-info.ejs', {
+        dogData: dog,
+        isLogin: loginFlag,
+        tipData: dogCare
+    });
 });
 
 router.get('/profile', checkAuthenticated, (req, res) => {
@@ -90,7 +238,8 @@ router.get('/profile', checkAuthenticated, (req, res) => {
     else {
         res.render('profile-dog.ejs', {
             userData: req.user,
-            dogData: dog
+            dogData: dog,
+            tipData: dogCare
         });
     }
 });
@@ -114,7 +263,6 @@ router.post('/profile/add', checkAuthenticated, (req, res) => {
         children: req.body.children,
         isTrained: req.body.trained
     });
-    console.log(dog);
     res.redirect('/profile');
 });
 
