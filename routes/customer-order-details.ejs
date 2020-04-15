@@ -13,7 +13,7 @@
     <div class="container">
         <div class="card" style="width: 100%;">
             <div class="card-body">
-                <h1 class="card-title">There is a booking request for you from <%= user %></h1>
+                <h1 class="card-title">You made a booking request for <%= sitter %></h1>
                 <% for (var booking of bookingDetails) { %>
                 <p>Booking ID : <%= booking.id %></p>
                 <p>Customer Name : <%= booking.userFirstName %> <%= booking.userLastName %></p>

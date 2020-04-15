@@ -55,9 +55,46 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title"><%= userData.firstName %></h5>
-                        <p class="card-text">Email: <%= userData.email %></p>
-                        <p class="card-text"><a href="/profile/add">Add your Dog</a></p>
+                        <h5 class="card-title"><%= userData.firstName %> <%= userData.lastName %></h5>
+                        <div class="row">
+                            <div class="col-2">
+                                <p class="card-text">Email</p>
+                            </div>
+                            <div class="col">
+                                <p class="card-text"><%= userData.email %></p>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-2">
+                                <p class="card-text">Address</p>
+                            </div>
+                            <div class="col">
+                                <p class="card-text">
+                                    <%= housingCondition.address %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-2">
+                                <p class="card-text">City</p>
+                            </div>
+                            <div class="col">
+                                <p class="card-text">
+                                    <%= housingCondition.city %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-2">
+                                <p class="card-text">State</p>
+                            </div>
+                            <div class="col">
+                                <p class="card-text">
+                                    <%= housingCondition.state %>
+                                </p>
+                            </div>
+                        </div>
+                        <p class="card-text mt-2"><a class="card-link" href="/profile/add">Add your Dog</a></p>
                     </div>
                 </div>
             </div>
@@ -166,13 +203,50 @@
             <div class="card-body">
                 <h5 class="card-title">Taking Care of a <%= i.breed %></h5>
                 <ul>
-
+                    <li>
+                        <p class="h6"><%= i.step1 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.step3 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.step4 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.step5 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.step6 %></p>
+                    </li>
                 </ul>
             </div>
             <div class="card-body">
                 <h5 class="card-title">Tips for <%= i.breed %></h5>
                 <ul>
-
+                    <li>
+                        <p class="h6"><%= i.tip1 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip2 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip3 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip4 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip5 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip6 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip7 %></p>
+                    </li>
+                    <li>
+                        <p class="h6"><%= i.tip8 %></p>
+                    </li>
                 </ul>
             </div>
         </div>

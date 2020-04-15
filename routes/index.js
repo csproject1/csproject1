@@ -14,11 +14,13 @@ const users = [];
 const dog = [];
 const booking = [];
 const dogCare = [];
+const housing = [];
 var loginFlag = false;
 var userEmail = '';
 var sitterEmail = '';
 var dogBreed = '';
-
+var userName = '';
+var sitterName = '';
 
 const initializePassport = require('../passport-config');
 initializePassport(
@@ -144,8 +146,9 @@ router.post('/:name/contact', checkAuthenticated, (req, res) => {
         pets: dog,
         message: req.body.message
     });
+    userName = req.body.firstName;
     userEmail = req.body.userEmail;
-    console.log(sitterEmail);
+    sitterName = req.params.name;
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -153,13 +156,13 @@ router.post('/:name/contact', checkAuthenticated, (req, res) => {
             pass: 'cSPROJECT#1'
         }
     });
-    const data = ejs.renderFile(__dirname + '\\order-details.ejs', { bookingDetails: booking, dogData: booking.pets }, (err, data) => {
+
+    ejs.renderFile(__dirname + '\\order-details.ejs', { bookingDetails: booking, user: userName }, (err, data) => {
         let mailOtions = {
             from: 'petadogapp@gmail.com',
             to: sitterEmail,
             subject: 'Booking confirmation from Pet a Dog',
-            html: data,
-            cc: userEmail
+            html: data
         }
         transporter.sendMail(mailOtions, (err, data) => {
             if (err) {
@@ -167,7 +170,26 @@ router.post('/:name/contact', checkAuthenticated, (req, res) => {
                 res.send(err);
             }
             else {
-                console.log("Email Sent");
+                console.log("Email Sent to sitter");
+                res.redirect('/:name/booking-details');
+            }
+        });
+    });
+
+    ejs.renderFile(__dirname + '\\customer-order-details.ejs', { bookingDetails: booking, sitter: sitterName }, (err, data) => {
+        let mailOtions = {
+            from: 'petadogapp@gmail.com',
+            to: userEmail,
+            subject: 'Booking confirmation from Pet a Dog',
+            html: data
+        }
+        transporter.sendMail(mailOtions, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.send(err);
+            }
+            else {
+                console.log("Email Sent to user");
                 res.redirect('/:name/booking-details');
             }
         });
@@ -183,7 +205,8 @@ router.get('/:name/booking-details', checkAuthenticated, (req, res) => {
 router.get('/dog-care', (req, res) => {
     res.render('dog-care.ejs', {
         isLogin: loginFlag,
-        userData: req.user
+        userData: req.user,
+        housingCondition: housing
     });
     console.log(loginFlag);
 });
@@ -203,6 +226,18 @@ router.post('/dog-care/add', (req, res) => {
         children: req.body.guestChildren,
         isTrained: req.body.guestTrained
     });
+    housing.push({
+        id: Date.now().toString(),
+        address: req.body.guestAddress,
+        city: req.body.guestCity,
+        state: req.body.guestState,
+        aptNumber: req.body.aptNumber,
+        zipcode: req.body.zipcode,
+        houseCondition: req.body.isHouseGood,
+        living: req.body.isLivingQuater,
+        heating: req.body.isVentilated,
+        fenced: req.body.isFenced
+    });
     dogBreed = req.body.guestDogBreed;
     fs.readFile('tips.json', (err, data) => {
         if (err) console.log(err);
@@ -211,8 +246,20 @@ router.post('/dog-care/add', (req, res) => {
             if (tips[i].breed === dogBreed) {
                 dogCare.push({
                     breed: tips[i].breed,
-                    info: tips[i].info,
-                    dogTips: tips[i].tips
+                    step1: tips[i].step1,
+                    step2: tips[i].step2,
+                    step3: tips[i].step3,
+                    step4: tips[i].step4,
+                    step5: tips[i].step5,
+                    step6: tips[i].step6,
+                    tip1: tips[i].tip1,
+                    tip2: tips[i].tip2,
+                    tip3: tips[i].tip3,
+                    tip4: tips[i].tip4,
+                    tip5: tips[i].tip5,
+                    tip6: tips[i].tip6,
+                    tip7: tips[i].tip7,
+                    tip8: tips[i].tip8,
                 });
                 res.redirect('/info');
             }
@@ -221,7 +268,6 @@ router.post('/dog-care/add', (req, res) => {
 });
 
 router.get('/info', (req, res) => {
-    console.log(dogCare);
     res.render('guest-dog-info.ejs', {
         dogData: dog,
         isLogin: loginFlag,
@@ -239,13 +285,19 @@ router.get('/profile', checkAuthenticated, (req, res) => {
         res.render('profile-dog.ejs', {
             userData: req.user,
             dogData: dog,
-            tipData: dogCare
+            tipData: dogCare,
+            housingCondition: housing[0]
         });
     }
 });
 
 router.get('/profile/add', checkAuthenticated, (req, res) => {
-    res.render('user-dog.ejs');
+    res.render('user-dog.ejs', {
+        dogData: dog,
+        isLogin: loginFlag,
+        tipData: dogCare,
+        housingCondition: housing
+    });
 });
 
 router.post('/profile/add', checkAuthenticated, (req, res) => {
@@ -263,6 +315,46 @@ router.post('/profile/add', checkAuthenticated, (req, res) => {
         children: req.body.children,
         isTrained: req.body.trained
     });
+    housing.push({
+        id: Date.now().toString(),
+        address: req.body.guestAddress,
+        city: req.body.guestCity,
+        state: req.body.guestState,
+        aptNumber: req.body.aptNumber,
+        zipcode: req.body.zipcode,
+        houseCondition: req.body.isHouseGood,
+        living: req.body.isLivingQuater,
+        heating: req.body.isVentilated,
+        fenced: req.body.isFenced
+    });
+    dogBreed = req.body.dogBreed;
+    fs.readFile('tips.json', (err, data) => {
+        if (err) console.log(err);
+        let tips = JSON.parse(data);
+        for (var i = 0; i < tips.length; i++) {
+            if (tips[i].breed === dogBreed) {
+                dogCare.push({
+                    breed: tips[i].breed,
+                    step1: tips[i].step1,
+                    step2: tips[i].step2,
+                    step3: tips[i].step3,
+                    step4: tips[i].step4,
+                    step5: tips[i].step5,
+                    step6: tips[i].step6,
+                    tip1: tips[i].tip1,
+                    tip2: tips[i].tip2,
+                    tip3: tips[i].tip3,
+                    tip4: tips[i].tip4,
+                    tip5: tips[i].tip5,
+                    tip6: tips[i].tip6,
+                    tip7: tips[i].tip7,
+                    tip8: tips[i].tip8,
+                });
+            }
+        }
+    });
+    console.log(dogBreed);
+    console.log(dogCare);
     res.redirect('/profile');
 });
 
