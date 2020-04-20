@@ -46,7 +46,7 @@ router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
 }))
-
+    console.log("Hi there, from 'Hari'");
 router.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs');
 })
