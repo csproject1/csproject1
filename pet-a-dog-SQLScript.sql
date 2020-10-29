@@ -75,12 +75,12 @@ create table services (
     sitter_preference_1 varchar(200),
 	sitter_preference_2 varchar(200)
 );
-select * from dog where user_email like 'pratham%';
+
 create table reviews (
 	review_id int primary key,
     sitter_name varchar(50),
 	customer_name varchar(2000),
-    review_date varchar(200),
+    review_date date,
     review_comment varchar(2000)
 );
 
@@ -108,6 +108,8 @@ insert into services values
 (1012, 60, 'Bhakti Shastri', 'House Sitting', 45, '16 - 40', '16 - 40'),
 (1013, 70, 'Prathmesh Pathak', 'Dog Boarding', 0.5, '0 - 15', '16 - 40'),
 (1014, 70, 'Prathmesh Pathak', 'House Sitting', 1, '0 - 15', '16 - 40');
+
+select * from reviews;
 
 insert into reviews values 
 (201, 'Kuntal Surwade', 'Tom', 'Nov 26, 2019', 'Michelle watched my mothers dog Fozzie for a week. She sent updates and pictures and treated him like he was her own. I am so thankful to have found Michelle to watch our pups!'),
@@ -166,8 +168,6 @@ create table credit_card_transaction (
     cvv int
 );
 
-select * from paypal_transaction;
-
 create table paypal_transaction (
 	paypal_transaction_id int primary key,
 	booking_id int,
@@ -203,8 +203,6 @@ create table users (
     user_confirm_password varchar(50)
 );
 
-select * from guest_dog;
-
 create table guest_dog(
 	dog_id int primary key,
     dog_name varchar(50),
@@ -220,8 +218,6 @@ create table guest_dog(
     dog_trained varchar(50)
 );
 
-select * from dog where user_email like 'pratham%';
-
 create table guest_housing (
     house_id int primary key,
     address_line_1 varchar(300),
@@ -233,10 +229,6 @@ create table guest_housing (
     house_heating varchar(10),
     house_fence varchar(10)
 );
-
-	
-
-
 
 
 
