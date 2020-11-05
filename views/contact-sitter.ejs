@@ -63,7 +63,7 @@
                         <label for="inputAddress2"><strong>Select Service</strong></label>
                         <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="selectedService"
                             required>
-                            <option selected>Select</option>
+                            <option selected value="">Select</option>
                             <% for (var service of services) { %>
                             <option value="<%= service.serviceName %>"><%= service.serviceName %></option>
                             <% } %>
