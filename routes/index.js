@@ -479,8 +479,7 @@ router.get('/:name/review', (req, res) => {
 
 router.get('/:name/contact', (req, res) => {
     let token = getLoginToken();
-    let currentUserEmail = getUserEmail();
-    console.log(req.body.selectedService);
+    let user_email = getUserEmail();
     jwt.verify(token, process.env.JWT_SECRET, (error) => {
         if (error) {
             res.redirect('/login');
@@ -521,16 +520,35 @@ router.get('/:name/contact', (req, res) => {
                                 }
                                 else {
                                     const feedback = results;
-                                    user_dog_query = `select * from dog where user_email like '%` + currentUserEmail + `%'`;
+                                    user_dog_query = `select * from dog where user_email like '%` + user_email + `%'`;
                                     db.query(user_dog_query, (error, dog) => {
                                         if (error) {
                                             console.log(error);
                                         }
                                         else {
-                                            res.render('contact-sitter.ejs', {
-                                                sitterData: sitter[0],
-                                                services: services,
-                                                dogData: dog
+                                            housing_query = `select * from housing_condition where user_email like '%` + user_email + `%'`;
+                                            db.query(housing_query, (error, housing) => {
+                                                if (error) {
+                                                    console.log(error);
+                                                }
+                                                else {
+                                                    if (housing === undefined || dog === undefined) {
+                                                        res.render('contact-sitter.ejs', {
+                                                            sitterData: sitter[0],
+                                                            services: services,
+                                                            dogData: 0,
+                                                            housingDetail: 0
+                                                        });
+                                                    }
+                                                    else {
+                                                        res.render('contact-sitter.ejs', {
+                                                            sitterData: sitter[0],
+                                                            services: services,
+                                                            dogData: dog,
+                                                            housingDetail: housing[0]
+                                                        });
+                                                    }
+                                                }
                                             });
                                         }
                                     });
@@ -546,9 +564,9 @@ router.get('/:name/contact', (req, res) => {
 
 router.post('/:name/contact', (req, res) => {
     let token = getLoginToken();
-    console.log(req.body.selectedService);
     uniqueID = Math.floor(100000000 + Math.random() * 900000000);
     setCurrentBookingId(uniqueID);
+    let user_email = getUserEmail();
     jwt.verify(token, process.env.JWT_SECRET, (error) => {
         if (error) {
             res.redirect('/login');
@@ -574,17 +592,26 @@ router.post('/:name/contact', (req, res) => {
                             console.log(error);
                         }
                         else {
-                            booking_insert_query = "insert into bookings values ('" + uniqueID + "', '" + req.params.name + "', '" + sitter[0].email + "', " +
-                                "'" + req.body.selectedService + "','" + service[0].serviceCharge + "','" + req.body.firstName + "', " +
-                                "'" + req.body.lastName + "','" + req.body.userEmail + "', '" + req.body.dropOff + "','" + req.body.selectDropTimeFrom + "', " +
-                                "'" + req.body.selectDropTimeTo + "','" + req.body.pickUp + "','" + req.body.selectPickTimeFrom + "','" + req.body.selectPickTimeTo + "', " +
-                                "'" + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + "')";
-                            db.query(booking_insert_query, (error, rows, fields) => {
+                            housing_query = `select * from housing_condition where user_email like '%` + user_email + `%'`;
+                            db.query(housing_query, (error, housing) => {
                                 if (error) {
                                     console.log(error);
                                 }
                                 else {
-                                    console.log("Booking Data inserted succesfully...");
+                                    booking_insert_query = "insert into bookings values ('" + uniqueID + "', '" + req.params.name + "', '" + sitter[0].email + "', " +
+                                        "'" + req.body.selectedService + "','" + service[0].serviceCharge + "','" + req.body.firstName + "', " +
+                                        "'" + req.body.lastName + "','" + req.body.userEmail + "', '" + req.body.dropOff + "','" + req.body.selectDropTimeFrom + "', " +
+                                        "'" + req.body.selectDropTimeTo + "','" + req.body.pickUp + "','" + req.body.selectPickTimeFrom + "','" + req.body.selectPickTimeTo + "', " +
+                                        "'" + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + "', '" + housing[0].address_line_1 + "', " +
+                                        "'" + sitter[0].address + "', '" + user_email + "')";
+                                    db.query(booking_insert_query, (error, rows, fields) => {
+                                        if (error) {
+                                            console.log(error);
+                                        }
+                                        else {
+                                            console.log("Booking Data inserted succesfully...");
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -596,13 +623,13 @@ router.post('/:name/contact', (req, res) => {
                 res.redirect('/payment');
             }
         }
-
     });
 });
 
 router.get('/payment', (req, res) => {
     let token = getLoginToken();
     let currentBookingId = getCurrentBookingId();
+    let user_email = getUserEmail();
     console.log(currentBookingId);
     jwt.verify(token, process.env.JWT_SECRET, (error) => {
         if (error) {
@@ -614,15 +641,43 @@ router.get('/payment', (req, res) => {
             }
 
             booking_summary_query = `select * from bookings where booking_id =` + currentBookingId;
-            db.query(booking_summary_query, (error, results) => {
+            db.query(booking_summary_query, (error, bookings) => {
                 if (error) {
                     console.log(error);
                 }
                 else {
-                    res.render('payment.ejs', {
-                        bookingDetails: results[0],
-                        cardDetailsErrorFlag: false,
-                        cardDetailsErrorMessage: ""
+                    sitter_query = `select * from sitter_info where sitter_name like '%` + bookings[0].sitter_name + `%'`;
+                    db.query(sitter_query, (error, sitter) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            user_query = `select * from users where email like '%` + user_email + `%'`;
+                            db.query(user_query, (error, user) => {
+                                if (error) {
+                                    console.log(error);
+                                }
+                                else {
+                                    housing_query = `select * from housing_condition where user_email like '%` + user_email + `%'`;
+                                    db.query(housing_query, (error, housing) => {
+                                        if (error) {
+                                            console.log(error);
+                                        }
+                                        else {
+                                            console.log(sitter);
+                                            res.render('payment.ejs', {
+                                                bookingDetails: bookings[0],
+                                                sitterDetail: sitter[0],
+                                                userDetail: user[0],
+                                                housingDetail: housing[0],
+                                                cardDetailsErrorFlag: false,
+                                                cardDetailsErrorMessage: ""
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
                 }
             });
@@ -853,7 +908,7 @@ router.post('/charge', (req, res) => {
                                 }
                                 else {
                                     console.log("Net banking data inserted.");
-                                    sendEmail(req, res, userEmail, booking[0].user_first_name, sitterEmail, booking[0].sitter_name);
+                                    sendEmail(req, res, booking[0].user_email, booking[0].user_first_name, booking[0].sitter_email, booking[0].sitter_name);
                                 }
                             });
                         });
@@ -861,6 +916,10 @@ router.post('/charge', (req, res) => {
             });
         }
     });
+});
+
+router.get('/tracking', (req, res) => {
+    res.redirect('/:name/booking-details');
 });
 
 router.get('/:name/booking-details', (req, res) => {
@@ -871,17 +930,33 @@ router.get('/:name/booking-details', (req, res) => {
             res.redirect('/login');
         }
         else {
-            booking_summary_query = `select * from bookings where booking_id =` + currentBookingId;
-            db.query(booking_summary_query, (error, booking) => {
-                if (error) {
-                    console.log(error);
-                }
-                else {
-                    res.render('booking-confirmed.ejs', {
-                        bookingDetails: booking
-                    });
-                }
-            });
+            if (currentBookingId === undefined) {
+                currentBookingId = 807361089;
+                booking_summary_query = `select * from bookings where booking_id =` + currentBookingId;
+                db.query(booking_summary_query, (error, booking) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        res.render('booking-confirmed.ejs', {
+                            bookingDetails: booking[0]
+                        });
+                    }
+                });
+            }
+            else {
+                booking_summary_query = `select * from bookings where booking_id =` + currentBookingId;
+                db.query(booking_summary_query, (error, booking) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        res.render('booking-confirmed.ejs', {
+                            bookingDetails: booking[0]
+                        });
+                    }
+                });
+            }
         }
     });
 });
@@ -1122,6 +1197,75 @@ router.post('/profile/add', (req, res) => {
         }
     });
     res.redirect('/profile');
+});
+
+router.get('/tracking', (req, res) => {
+    let user_email = getUserEmail();
+    let currentBookingId = getCurrentBookingId();
+    let token = getLoginToken();
+
+    jwt.verify(token, process.env.JWT_SECRET, (error) => {
+        if (error) {
+            res.redirect('/login');
+        }
+        else {
+            housing_query = `select * from housing_condition where user_email like '%` + user_email + `%'`;
+            db.query(housing_query, (error, housing) => {
+                if (error) {
+                    console.log(error);
+                }
+                else {
+                    if (currentBookingId === undefined) {
+                        currentBookingId = 106471117;
+                        booking_query = `select * from bookings where booking_id =` + currentBookingId;
+                        db.query(booking_query, (error, bookings) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                            else {
+                                sitter_query = `select * from sitter_info where sitter_name like '%` + bookings[0].sitter_name + `%'`;
+                                db.query(sitter_query, (error, sitter) => {
+                                    if (error) {
+                                        console.log(error);
+                                    }
+                                    else {
+                                        res.render('tracking.ejs', {
+                                            sitterDetail: sitter[0],
+                                            housingDetail: housing[0],
+                                            bookingDetail: bookings[0]
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        booking_query = `select * from bookings where booking_id =` + currentBookingId;
+                        db.query(booking_query, (error, bookings) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                            else {
+                                sitter_query = `select * from sitter_info where sitter_name like '%` + bookings[0].sitter_name + `%'`;
+                                db.query(sitter_query, (error, sitter) => {
+                                    if (error) {
+                                        console.log(error);
+                                    }
+                                    else {
+                                        res.render('tracking.ejs', {
+                                            sitterDetail: sitter[0],
+                                            housingDetail: housing[0],
+                                            bookingDetail: bookings[0]
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
 });
 
 module.exports = router;

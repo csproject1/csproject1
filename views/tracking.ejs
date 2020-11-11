@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet a Dog | Booking Confirmed</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Directions Service</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/d3fe7c8d04.js" crossorigin="anonymous"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style>
         /* Always set the map height explicitly to define the size of the div
-           * element that contains the map. */
+       * element that contains the map. */
         #map {
-            margin-top: 2rem;
+            margin-top: 3rem;
             height: 70%;
+        }
+
+        .placeholder {
+            height: 500px;
         }
 
         /* Optional: Makes the sample page fill the window. */
@@ -23,8 +29,8 @@
     </style>
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+<body style="background-color: rgb(244, 245, 246);">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" onload="setRating()">
         <div class="container">
             <a class="navbar-brand" href="/home">
                 <img src="../imgs/pet-a-dog.png" alt="" style="width: 30px;">
@@ -37,7 +43,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/home">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/search-sitter">Search a Sitter</a>
@@ -60,7 +66,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container" style="margin-top: 5rem;">
         <h1 class="display-4" style="text-align: center;">Booking Details</h1>
         <div class="card mt-4" style="width: 100%;">
@@ -70,7 +75,7 @@
                         <p class="h2">Booking ID: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h2"><%= bookingDetails.booking_id %></p>
+                        <p class="h2">34165441653431131354154</p>
                     </div>
                 </div>
 
@@ -79,7 +84,7 @@
                         <p class="h4">Customer Name: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.user_first_name %> <%= bookingDetails.user_last_name %></p>
+                        <p class="h4">Prathmesh Pathak</p>
                     </div>
                 </div>
 
@@ -88,7 +93,7 @@
                         <p class="h4">Sitter Name: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.sitter_name %></p>
+                        <p class="h4">Kuntal Surwade</p>
                     </div>
                 </div>
 
@@ -97,7 +102,7 @@
                         <p class="h4">Service Selected: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.service_name %> </p>
+                        <p class="h4">Dog Boarding</p>
                     </div>
                 </div>
 
@@ -106,7 +111,7 @@
                         <p class="h4">Date of Booking: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.booking_date %> </p>
+                        <p class="h4">09/28/2020</p>
                     </div>
                 </div>
 
@@ -115,7 +120,7 @@
                         <p class="h4">Drop Off Date: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.drop_off_date %> </p>
+                        <p class="h4">10/02/2020 </p>
                     </div>
                 </div>
 
@@ -124,7 +129,7 @@
                         <p class="h4">Drop off Time: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.drop_off_time_from %> </p>
+                        <p class="h4">6.00 PM</p>
                     </div>
                 </div>
 
@@ -133,7 +138,7 @@
                         <p class="h4">Pick up Date: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.pick_puck_date %> </p>
+                        <p class="h4">10/01/2020</p>
                     </div>
                 </div>
 
@@ -142,33 +147,13 @@
                         <p class="h4">Pick up Time: </p>
                     </div>
                     <div class="col-md">
-                        <p class="h4"><%= bookingDetails.pick_puck_time_from %> </p>
+                        <p class="h4">8.00 PM</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="container mt-4">
-        <div class="card">
-            <h5 class="card-header">Your request had been made</h5>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-5">
-                        <h5 class="card-title"><%= bookingDetails.sitter_name %> will be at your place in</h5>
-                    </div>
-                    <div class="col-sm-2">
-                        <h5 class="card-title">
-                            <p id="time">
-                            </p>
-                        </h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="map"></div>
+    <div id="map" class="container"></div>
     <script>
         function initMap() {
             var directionsService = new google.maps.DirectionsService;
@@ -184,18 +169,16 @@
             };
             onChangeHandler();
         }
-        console.log(`<%= bookingDetails.user_address %>`);
 
         function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             directionsService.route({
-                origin: `<%= bookingDetails.user_address %>`,
-                destination: `<%= bookingDetails.sitter_address %>`,
+                origin: `<%= sitterDetail.sitter_address %>`,
+                destination: `<%= housingDetail.address_line_1 %>`,
                 travelMode: 'DRIVING'
             }, function (response, status) {
                 if (status === 'OK') {
                     directionsDisplay.setDirections(response);
                     console.log(response.routes[0].legs[0].duration.text);
-                    document.getElementById('time').innerHTML = response.routes[0].legs[0].duration.text
                 } else {
                     window.alert('Directions request failed due to ' + status);
                 }
@@ -206,7 +189,7 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnbS5VoTysqU5e79Od7lMZ93Y7iJ5AYKw&callback=initMap">
         </script>
 
-    <footer class="container-fluid page-footer font-small bg-info pt-4" style="margin-top: 2rem;">
+    <footer class="container-fluid page-footer font-small bg-info pt-4 mt-4">
         <div class="container text-center text-md-left">
             <div class="row">
                 <div class="col-md-6 mt-md-0 mt-3">
@@ -217,6 +200,7 @@
                         harum esse fugiat. Itaque, culpa?</p>
 
                 </div>
+
                 <hr class="clearfix w-100 d-md-none pb-3">
                 <div class="col-md-6 mb-md-0 mb-3">
                     <h5 class="text-uppercase font-weight-bold">Footer text 2</h5>
@@ -234,17 +218,6 @@
             711 Capitol Way S., Suite 204, Olympia, WA 98501
         </div>
     </footer>
-
-    <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
-        integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
-        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
-        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>
