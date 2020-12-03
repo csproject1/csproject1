@@ -14,6 +14,22 @@
             margin-right: auto;
             width: 50%;
         }
+
+        #more {
+            display: none;
+        }
+
+        .read-more-button {
+            background: none !important;
+            border: none;
+            padding: 0 !important;
+            /*optional*/
+            font-family: arial, sans-serif;
+            /*input has OS specific font-family*/
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -132,13 +148,45 @@
                             <%= sitterData.name %> can host up to 2 dogs per night.
                         </p>
                     </div>
+                    <div class="card-body">
+                        <h5 class="card-title">About <%= sitterData.name %>'s Home</h5>
+                        <div class="row">
+                            <div class="col">
+                                <li class="list-group-item list-group-item-light">Lives in a House
+                                </li>
+                                <li class="list-group-item list-group-item-light">Non-Smoking Household
+                                </li>
+                                <li class="list-group-item list-group-item-light">No Children Present
+                                </li>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <li class="list-group-item list-group-item-light">Has a Fenced Yard
+                                </li>
+                                <li class="list-group-item list-group-item-light">Has No Dogs
+                                </li>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-8">
                 <div class="card" style="width: 100%;">
-                    <img src="../imgs/dog-review.jpg" class="card-img-top img-fluid" style="margin: 1rem;">
+                    <img src="../imgs/dog-review.jpg" class="card-img-top img-fluid">
                     <div class="card-body">
-                        <h4 class="card-title mb-3">Reviews</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <a href="/search-sitter/<%= sitterData.name %>" style="color: black;">
+                                    <h4 class="card-title mb-3">Comments</h4>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="/<%= sitterData.name %>/review" style="color: black;">
+                                    <h4 class="card-title mb-3">Feedback</h4>
+                                </a>
+                            </div>
+                        </div>
                         <% for (var review of feedback) { %>
                         <div class="row mt-4">
                             <div class="col-2">
@@ -155,11 +203,62 @@
                             </div>
                         </div>
                         <p class="card-text mt-2" style="margin: 1rem">
-                            <%= review.comment %>
+                            <% if (review.comment.length > 100) { %>
+                            <% str1 = review.comment.substring(0, 100) %>
+                            <% str2 = review.comment.substring(101, review.comment.length) %>
+                            <%= str1 %> <span id="dots">...</span><span id="more">
+                                <%= str2 %></span>
+                        <p><button class="read-more-button" href="#" onclick="myFunction()" id="myBtn">Read
+                                more</button></p>
+                        <script>
+                            function myFunction() {
+                                var dots = document.getElementById("dots");
+                                var moreText = document.getElementById("more");
+                                var btnText = document.getElementById("myBtn");
+
+                                if (dots.style.display === "none") {
+                                    dots.style.display = "inline";
+                                    btnText.innerHTML = "Read more";
+                                    moreText.style.display = "none";
+                                } else {
+                                    dots.style.display = "none";
+                                    btnText.innerHTML = "Read less";
+                                    moreText.style.display = "inline";
+                                }
+                            }
+                        </script>
+                        <% } else { %>
+                        <%= review.comment %>
+                        <% } %>
                         </p>
                         <a href="#" class="card-link">Know More</a>
                         <a href="#" class="card-link">Was this review helpful ?</a>
                         <% } %>
+                    </div>
+                    <div class="card-body">
+                        <form action="/<%= sitterData.name %>/comment" method="POST">
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1">Comment</label>
+                                <textarea class="form-control" id="sitterComment" rows="3" name="comment"
+                                    onkeydown="checkCommentLength()" required></textarea>
+                            </div>
+                            <button class="btn btn-primary mt-4" id="review-button">Add Comment</button>
+                            <script>
+                                function checkCommentLength() {
+                                    var comment = document.getElementById('sitterComment').value;
+                                    if (comment.length > 500) {
+                                        document.getElementById('sitterComment').style.borderWidth = "3px";
+                                        document.getElementById('sitterComment').style.borderColor = "red";
+                                        document.getElementById('review-button').disabled = true;
+                                    }
+                                    else {
+                                        document.getElementById('sitterComment').style.borderWidth = "1px";
+                                        document.getElementById('sitterComment').style.borderColor = "white";
+                                        document.getElementById('review-button').disabled = false;
+                                    }
+                                }
+                            </script>
+                        </form>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title">About <%= sitterData.name %></h5>
@@ -174,26 +273,6 @@
                             have no preferences as to breeds.
                         </p>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">About <%= sitterData.name %>'s Home</h5>
-                        <div class="row">
-                            <div class="col">
-                                <li class="list-group-item list-group-item-light">Lives in a House
-                                </li>
-                                <li class="list-group-item list-group-item-light">Non-Smoking Household
-                                </li>
-                                <li class="list-group-item list-group-item-light">No Children Present
-                                </li>
-                            </div>
-                            <div class="col">
-                                <li class="list-group-item list-group-item-light">Has a Fenced Yard
-                                </li>
-                                <li class="list-group-item list-group-item-light">Has No Dogs
-                                </li>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

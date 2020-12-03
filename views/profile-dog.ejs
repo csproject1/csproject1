@@ -5,12 +5,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet a Dog | User Profile</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/d3fe7c8d04.js" crossorigin="anonymous"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script>
+        const ratings = {
+            sony: `<%= stars %>`
+        }
+
+        const starsTotal = 5;
+        document.addEventListener('DOMContentLoaded', getRatings);
+
+        function getRatings() {
+            for (let rating in ratings) {
+                const starPercentage = (ratings[rating] / starsTotal) * 100;
+                const starPercentageRounded = `${Math.round(starPercentage / 10) * 10}%`;
+
+                document.querySelector(`.${rating} .stars-inner`).style.width = starPercentageRounded;
+                document.querySelector(`.${rating} .number-rating`).innerHTML = ratings[rating];
+            }
+        }
+    </script>
+    <style>
+        .slidecontainer {
+            width: 100%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .stars-outer {
+            position: relative;
+            display: inline;
+        }
+
+        .stars-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+        }
+
+        .stars-outer::before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: "\f005 \f005 \f005 \f005 \f005";
+        }
+
+        .stars-inner::before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: "\f005 \f005 \f005 \f005 \f005";
+            color: #f8ce0b;
+        }
+    </style>
 </head>
 
 <body style="background-color: rgb(244, 245, 246);">
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" onload="setRating()">
         <div class="container">
             <a class="navbar-brand" href="/home">
                 <img src="../imgs/pet-a-dog.png" alt="" style="width: 30px;">
@@ -56,7 +139,7 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title"><%= userData.first_name %> <%= userData.last_name %></h5>
-                        <div class="row">
+                        <div class=" row">
                             <div class="col-2">
                                 <p class="card-text">Email</p>
                             </div>
@@ -95,6 +178,8 @@
                             </div>
                         </div>
                         <p class="card-text mt-2"><a class="card-link" href="/profile/add">Add your Dog</a></p>
+                        <p class="card-text mt-2"><a class="card-link" href="/tracking">Track Your recently used
+                                services</a></p>
                     </div>
                 </div>
             </div>
@@ -252,6 +337,118 @@
         </div>
         <% } %>
     </div>
+
+    <% if (bookingData.length == 0) { %>
+
+    <% } else { %>
+    <div class="container">
+        <div class="card">
+            <h5 class="card-header">Recently Used Services</h5>
+            <div class="row">
+                <% for (var booking of bookingData) { %>
+                <div class="card-body ml-3">
+                    <h5 class="card-title"><%= booking.sitter_name %></h5>
+                    <p class="card-text"><strong>Service Name: </strong><%= booking.service_name %></p>
+                    <p class="card-text"><strong>Service Charge: </strong>$<%= booking.service_charge %></p>
+                    <button data-toggle="modal" data-target="#myModal" class="btn btn-primary dropbtn"
+                        title="<%= booking.sitter_name %>" sitter-name="<%= booking.sitter_name %>"
+                        service-selected="<%= booking.service_name %>"
+                        service-charge="<%= booking.service_charge %>">Rate
+                        this service
+                    </button>
+                    <div id="myModal" class="modal fade" style="width: 100%;">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Rate <%= booking.sitter_name %>'s service</h4>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Service Name</th>
+                                                <th>Rating</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="sony">
+                                                <td><%= booking.service_name %></td>
+                                                <td>
+                                                    <div class="stars-outer">
+                                                        <div class="stars-inner"></div>
+                                                    </div>
+                                                    <span class="number-rating"></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <form action="/<%= booking.sitter_name %>/<%= booking.service_name %>/review"
+                                        method="POST">
+                                        <!-- <input type="hidden" name="Id" class="hiddenValue" value="" /> -->
+                                        <div class="slidecontainer">
+                                            <input name="sitterRating" type="range" min="0.1" max="5" value="50"
+                                                class="slider" id="myRange" step="0.1">
+                                            <p>Rating: <span id="demo"></span></p>
+                                        </div>
+                                        <input type="hidden" name="sitterName" class="hiddenSitterName" value="" />
+                                        <input type="hidden" name="serviceSelected" class="hiddenServiceSelected"
+                                            value="" />
+                                        <input type="hidden" name="serviceCharge" class="hiddenServiceCharge"
+                                            value="" />
+                                        <textarea class="form-control" id="sitterComment" rows="3" name="comment"
+                                            onkeydown="checkCommentLength()" required></textarea>
+                                        <button class="btn btn-primary mt-4" id="review-button">Submit</button>
+                                    </form>
+                                    <script>
+                                        var slider = document.getElementById("myRange");
+                                        var output = document.getElementById("demo");
+                                        output.innerHTML = slider.value;
+
+                                        slider.oninput = function () {
+                                            output.innerHTML = this.value;
+                                        }
+                                    </script>
+                                    <script>
+                                        function checkCommentLength() {
+                                            var comment = document.getElementById('sitterComment').value;
+                                            if (comment.length > 100) {
+                                                document.getElementById('sitterComment').style.borderWidth = "3px";
+                                                document.getElementById('sitterComment').style.borderColor = "red";
+                                                document.getElementById('review-button').disabled = true;
+                                            }
+                                            else {
+                                                document.getElementById('sitterComment').style.borderWidth = "1px";
+                                                document.getElementById('sitterComment').style.borderColor = "white";
+                                                document.getElementById('review-button').disabled = false;
+                                            }
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropbtn').click(function () {
+                                //var title = $(this).attr('title');
+                                //$('.hiddenValue').val(title);
+                                var sitterName = $(this).attr('sitter-name');
+                                var serviceSelected = $(this).attr('service-selected');
+                                var serviceCharge = $(this).attr('service-charge');
+                                $('.hiddenSitterName').val(sitterName);
+                                $('.hiddenServiceSelected').val(serviceSelected);
+                                $('.hiddenServiceCharge').val(serviceCharge);
+                            })
+                        }) 
+                    </script>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <% } %>
 
     <footer class="container-fluid page-footer font-small bg-info pt-4 mt-4">
         <div class="container text-center text-md-left">
